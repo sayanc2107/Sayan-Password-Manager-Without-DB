@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SecureVault - Password Manager</title>
+  <link rel="manifest" href="manifest.json" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -30,9 +31,7 @@
   <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 shadow-sm sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xl shadow-md">
-          🛡️
-        </div>
+        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-xl shadow-md">🛡️</div>
         <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">SecureVault</span>
       </div>
 
@@ -42,7 +41,7 @@
           <span id="themeIcon">🌙</span>
         </button>
 
-        <!-- Profile Dropdown (Only shown after login) -->
+        <!-- Profile Dropdown -->
         <div id="userMenuContainer" class="relative hidden">
           <button onclick="toggleDropdown('profileDropdown')" class="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none py-1.5 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
             <span id="welcomeUserName">Welcome, User</span>
@@ -53,6 +52,7 @@
             <a href="javascript:void(0)" onclick="openModal('accountDetailsModal')" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Account details</a>
             <a href="javascript:void(0)" onclick="openModal('profileUpdateModal')" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Profile update</a>
             <a href="javascript:void(0)" onclick="openModal('changePasswordModal')" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Change password</a>
+            <a href="javascript:void(0)" onclick="openModal('changeMpinModal')" class="block px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800">Change MPIN</a>
             <hr class="my-1 border-slate-200 dark:border-slate-800" />
             <a href="javascript:void(0)" onclick="logout()" class="block px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-800 font-medium">Log-out</a>
           </div>
@@ -72,13 +72,11 @@
         <h2 class="text-2xl font-bold text-center mb-2 text-slate-900 dark:text-white">Sign In</h2>
         <p class="text-sm text-center text-slate-500 dark:text-slate-400 mb-6">Unlock your zero-knowledge vault</p>
 
-        <!-- MPIN Quick Login Toggle Tab -->
         <div id="mpinOptionBadge" class="hidden mb-4 p-3 bg-brand-50 dark:bg-slate-800 rounded-xl border border-brand-100 dark:border-slate-700 flex justify-between items-center">
           <span class="text-xs font-semibold text-brand-700 dark:text-brand-300">Fast Unlock with MPIN Available</span>
           <button onclick="toggleAuthMode(true)" id="authModeSwitchBtn" class="text-xs text-brand-600 dark:text-brand-400 underline font-medium">Use MPIN</button>
         </div>
 
-        <!-- Full Login Form -->
         <form id="standardLoginForm" onsubmit="handleStandardLogin(event)" class="space-y-4">
           <div>
             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Email or Mobile Number</label>
@@ -94,7 +92,6 @@
           <button type="submit" class="w-full py-2.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-medium rounded-lg text-sm transition shadow-sm">Login</button>
         </form>
 
-        <!-- MPIN Login Form -->
         <form id="mpinLoginForm" onsubmit="handleMpinLogin(event)" class="space-y-4 hidden">
           <div>
             <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">4-Digit MPIN</label>
@@ -116,31 +113,31 @@
 
         <form id="registrationForm" onsubmit="handleRegister(event)" class="space-y-3">
           <div>
-            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name *</label>
             <input type="text" id="regName" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Email *</label>
             <input type="email" id="regEmail" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Mobile Number</label>
-            <input type="tel" id="regMobile" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Mobile Number (Optional)</label>
+            <input type="tel" id="regMobile" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Date of Birth</label>
-            <input type="date" id="regDob" required onchange="calculateAndDisplayAge(this.value, 'regAgeDisplay')" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
+            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Date of Birth (Optional)</label>
+            <input type="date" id="regDob" onchange="calculateAndDisplayAge(this.value, 'regAgeDisplay')" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
             <span id="regAgeDisplay" class="text-[11px] text-slate-500 mt-0.5 block">Age: -</span>
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Master Password</label>
+            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Master Password *</label>
             <div class="relative">
               <input type="password" id="regPassword" required minlength="6" class="w-full px-3 py-1.5 pr-10 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
               <button type="button" onclick="togglePassVisibility('regPassword', this)" class="absolute right-2 top-2 text-slate-400 hover:text-slate-600 text-xs">Show</button>
             </div>
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Confirm Password</label>
+            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Confirm Password *</label>
             <div class="relative">
               <input type="password" id="regConfirmPassword" required minlength="6" class="w-full px-3 py-1.5 pr-10 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" />
               <button type="button" onclick="togglePassVisibility('regConfirmPassword', this)" class="absolute right-2 top-2 text-slate-400 hover:text-slate-600 text-xs">Show</button>
@@ -148,11 +145,11 @@
           </div>
           <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
             <div>
-              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">4-Digit MPIN</label>
+              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">4-Digit MPIN *</label>
               <input type="password" maxlength="4" pattern="[0-9]{4}" id="regMpin" required class="w-full text-center font-bold px-2 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="1234" />
             </div>
             <div>
-              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Confirm MPIN</label>
+              <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Confirm MPIN *</label>
               <input type="password" maxlength="4" pattern="[0-9]{4}" id="regConfirmMpin" required class="w-full text-center font-bold px-2 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-brand-500 outline-none" placeholder="1234" />
             </div>
           </div>
@@ -166,10 +163,9 @@
       </div>
     </div>
 
-    <!-- 2. VAULT DASHBOARD (AFTER LOGIN) -->
+    <!-- 2. VAULT DASHBOARD -->
     <div id="vaultDashboard" class="hidden space-y-6">
       
-      <!-- Top Action Bar -->
       <div class="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
         <div class="flex items-center space-x-3 w-full md:w-auto">
           <div class="relative flex-1 md:w-80">
@@ -198,7 +194,6 @@
         </div>
       </div>
 
-      <!-- Password Strength Auditor Status Banner -->
       <div id="auditorBanner" class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-4 text-xs">
         <div class="flex items-center space-x-4">
           <span class="font-bold text-slate-700 dark:text-slate-300">Vault Health Audit:</span>
@@ -210,9 +205,7 @@
         <span class="text-slate-400 text-[11px]">Audit runs locally in real-time</span>
       </div>
 
-      <!-- Vault Items Grid -->
       <div id="vaultItemsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Dynamic Cards Inserted Here -->
       </div>
     </div>
   </main>
@@ -253,20 +246,20 @@
       </div>
       <form onsubmit="handleProfileUpdate(event)" class="space-y-3">
         <div>
-          <label class="block text-xs font-medium mb-1">Full Name</label>
+          <label class="block text-xs font-medium mb-1">Full Name *</label>
           <input type="text" id="updName" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-medium mb-1">Date of Birth</label>
-          <input type="date" id="updDob" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+          <label class="block text-xs font-medium mb-1">Date of Birth (Optional)</label>
+          <input type="date" id="updDob" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-medium mb-1">Email</label>
+          <label class="block text-xs font-medium mb-1">Email *</label>
           <input type="email" id="updEmail" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-medium mb-1">Mobile Number</label>
-          <input type="tel" id="updMobile" required class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
+          <label class="block text-xs font-medium mb-1">Mobile Number (Optional)</label>
+          <input type="tel" id="updMobile" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" />
         </div>
         <div class="p-3 bg-amber-50 dark:bg-slate-800 border border-amber-200 dark:border-slate-700 rounded-xl">
           <label class="block text-xs font-bold text-amber-800 dark:text-amber-400 mb-1">Verify with Current Master Password</label>
@@ -320,7 +313,37 @@
     </div>
   </div>
 
-  <!-- 4. ADD / EDIT ENTRY MODAL (MAIN WORK) -->
+  <!-- 4. CHANGE MPIN MODAL (NEW) -->
+  <div id="changeMpinModal" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-md rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4">
+      <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
+        <h3 class="font-bold text-lg text-slate-900 dark:text-white">Change MPIN</h3>
+        <button type="button" onclick="closeModal('changeMpinModal')" class="text-slate-400 hover:text-slate-600">✕</button>
+      </div>
+      <form onsubmit="handleChangeMpin(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-medium mb-1">Current MPIN</label>
+          <input type="password" id="chgCurrentMpin" maxlength="4" pattern="[0-9]{4}" required class="w-full text-center font-bold px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" placeholder="••••" />
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-xs font-medium mb-1">New MPIN</label>
+            <input type="password" id="chgNewMpin" maxlength="4" pattern="[0-9]{4}" required class="w-full text-center font-bold px-2 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" placeholder="••••" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium mb-1">Confirm New MPIN</label>
+            <input type="password" id="chgConfirmNewMpin" maxlength="4" pattern="[0-9]{4}" required class="w-full text-center font-bold px-2 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-sm" placeholder="••••" />
+          </div>
+        </div>
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal('changeMpinModal')" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-sm">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm">Update MPIN</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 5. ADD / EDIT ENTRY MODAL -->
   <div id="entryModal" class="hidden fixed inset-0 modal-backdrop z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div class="bg-white dark:bg-slate-900 w-full max-w-2xl rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-2xl space-y-4 my-8">
       <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
@@ -363,7 +386,6 @@
           </div>
         </div>
 
-        <!-- Password Field & Generator -->
         <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-2">
           <div class="flex justify-between items-center">
             <label class="block text-xs font-semibold">Password with view option *</label>
@@ -376,7 +398,6 @@
           <div id="entryPassStrengthDisplay" class="text-xs text-slate-500 font-medium">Strength: -</div>
         </div>
 
-        <!-- Recovery Info -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-medium mb-1">Recovery Email</label>
@@ -388,7 +409,6 @@
           </div>
         </div>
 
-        <!-- TFA Settings -->
         <div class="p-3.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
           <div class="flex items-center justify-between">
             <div>
@@ -401,7 +421,6 @@
             </label>
           </div>
 
-          <!-- TFA Options Details Container -->
           <div id="tfaOptionsContainer" class="hidden space-y-3 pt-2 border-t border-slate-200 dark:border-slate-700">
             <label class="block text-xs font-semibold">TFA Methods Added (Select all applicable):</label>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
@@ -412,7 +431,6 @@
               <label class="flex items-center space-x-1.5"><input type="checkbox" id="tfaSecKey" class="rounded text-brand-600"> <span>Security Key</span></label>
             </div>
 
-            <!-- Authenticator Provider Details -->
             <div id="authenticatorDetailsBlock" class="hidden p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700 space-y-2">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
@@ -433,7 +451,6 @@
               </div>
             </div>
 
-            <!-- Backup Codes Entry -->
             <div id="backupCodesBlock" class="hidden p-2.5 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
               <label class="block text-[11px] font-semibold mb-1">Secure Backup Codes (One per line or comma separated)</label>
               <textarea id="tfaBackupCodes" rows="3" class="w-full px-2 py-1 text-xs rounded border border-slate-300 dark:border-slate-700 bg-transparent font-mono" placeholder="ABCD-1234&#10;WXYZ-5678"></textarea>
@@ -441,13 +458,11 @@
           </div>
         </div>
 
-        <!-- Additional Notes -->
         <div>
           <label class="block text-xs font-semibold mb-1">Additional Notes</label>
           <textarea id="entryNotes" rows="2" class="w-full px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 outline-none" placeholder="Security questions, PINs, or hints..."></textarea>
         </div>
 
-        <!-- Modal Actions -->
         <div class="flex justify-end space-x-2 pt-2 border-t border-slate-200 dark:border-slate-800">
           <button type="button" onclick="closeModal('entryModal')" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-xs font-semibold">Cancel</button>
           <button type="submit" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold">Save Entry</button>
@@ -458,22 +473,19 @@
 
   <!-- ==================== APPLICATION SCRIPTS ==================== -->
   <script>
-    // --- STATE MANAGEMENT ---
-    let currentUser = null;       // Holds logged in profile
-    let masterCryptoKey = null;   // Active CryptoKey in memory for AES-GCM
-    let vaultItems = [];          // Decrypted list of items in active session
+    let currentUser = null;
+    let masterCryptoKey = null;
+    let vaultItems = [];
 
     const STORAGE_KEY_AUTH = "SV_AUTH_RECORD";
     const STORAGE_KEY_VAULT = "SV_ENCRYPTED_VAULT";
     const STORAGE_KEY_THEME = "SV_THEME_PREF";
 
-    // --- INITIALIZATION ---
     window.addEventListener("DOMContentLoaded", () => {
       initTheme();
       checkExistingAccount();
     });
 
-    // Theme Management
     function initTheme() {
       const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
       if (savedTheme === 'dark') {
@@ -534,7 +546,6 @@
       }
     }
 
-    // --- CRYPTOGRAPHY ENGINE (PBKDF2 & AES-GCM) ---
     async function deriveKeyFromSecret(secret, saltString) {
       const enc = new TextEncoder();
       const keyMaterial = await crypto.subtle.importKey(
@@ -584,14 +595,12 @@
       return JSON.parse(dec.decode(decrypted));
     }
 
-    // Hash generator for password / MPIN verification
     async function hashString(str) {
       const enc = new TextEncoder();
       const buf = await crypto.subtle.digest("SHA-256", enc.encode(str));
       return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // --- AUTHENTICATION & ACCOUNT REGISTRATION ---
     async function handleRegister(e) {
       e.preventDefault();
       const name = document.getElementById('regName').value.trim();
@@ -615,11 +624,9 @@
       const passHash = await hashString(pass);
       const mpinHash = await hashString(mpin);
 
-      // Create a master raw symmetric key for the user vault
-      const rawVaultKey = crypto.getRandomValues(new Uint8Array(32)); // 256-bit key
+      const rawVaultKey = crypto.getRandomValues(new Uint8Array(32)); 
       const importedVaultKey = await crypto.subtle.importKey("raw", rawVaultKey, { name: "AES-GCM" }, true, ["encrypt", "decrypt"]);
 
-      // Encrypt the raw vault key with the Password-derived key and MPIN-derived key
       const keyFromPass = await deriveKeyFromSecret(pass, email);
       const keyFromMpin = await deriveKeyFromSecret(mpin, email);
 
@@ -639,7 +646,6 @@
 
       localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(authRecord));
       
-      // Initialize an empty encrypted vault
       masterCryptoKey = importedVaultKey;
       currentUser = authRecord;
       vaultItems = [];
@@ -728,12 +734,12 @@
       closeModal('accountDetailsModal');
       closeModal('profileUpdateModal');
       closeModal('changePasswordModal');
+      closeModal('changeMpinModal');
       closeModal('entryModal');
       document.getElementById('profileDropdown').classList.add('hidden');
       checkExistingAccount();
     }
 
-    // --- DASHBOARD AND NAVIGATION ---
     function enterDashboard() {
       document.getElementById('authSection').classList.add('hidden');
       document.getElementById('vaultDashboard').classList.remove('hidden');
@@ -768,10 +774,10 @@
       }
     }
 
-    // Calculate current age dynamically from Date of Birth
     function calculateAge(dobString) {
-      if (!dobString) return 0;
+      if (!dobString) return "N/A";
       const birth = new Date(dobString);
+      if (isNaN(birth)) return "N/A";
       const today = new Date();
       let age = today.getFullYear() - birth.getFullYear();
       const m = today.getMonth() - birth.getMonth();
@@ -783,24 +789,24 @@
 
     function calculateAndDisplayAge(dobString, targetElemId) {
       const age = calculateAge(dobString);
-      document.getElementById(targetElemId).textContent = `Age: ${age} years old`;
+      document.getElementById(targetElemId).textContent = age === "N/A" ? "Age: Not provided" : `Age: ${age} years old`;
     }
 
     function populateProfileDetails() {
+      const ageVal = calculateAge(currentUser.dob);
+      
       document.getElementById('dtlName').textContent = currentUser.name;
-      document.getElementById('dtlDob').textContent = currentUser.dob;
-      document.getElementById('dtlAge').textContent = `${calculateAge(currentUser.dob)} years old`;
+      document.getElementById('dtlDob').textContent = currentUser.dob || "Not provided";
+      document.getElementById('dtlAge').textContent = ageVal === "N/A" ? "Not provided" : `${ageVal} years old`;
       document.getElementById('dtlEmail').textContent = currentUser.email;
-      document.getElementById('dtlMobile').textContent = currentUser.mobile;
+      document.getElementById('dtlMobile').textContent = currentUser.mobile || "Not provided";
 
-      // Also prepopulate Profile Updation Form
       document.getElementById('updName').value = currentUser.name;
-      document.getElementById('updDob').value = currentUser.dob;
+      document.getElementById('updDob').value = currentUser.dob || '';
       document.getElementById('updEmail').value = currentUser.email;
-      document.getElementById('updMobile').value = currentUser.mobile;
+      document.getElementById('updMobile').value = currentUser.mobile || '';
     }
 
-    // --- PROFILE & PASSWORD UPDATE OPERATIONS ---
     async function handleProfileUpdate(e) {
       e.preventDefault();
       const enteredPass = document.getElementById('updPasswordVerify').value;
@@ -841,7 +847,6 @@
         return;
       }
 
-      // Re-derive new key from new pass and re-encrypt the raw vault key
       const rawVaultKeyArray = await crypto.subtle.exportKey("raw", masterCryptoKey);
       const newPassDerivedKey = await deriveKeyFromSecret(newPass, currentUser.email);
       const newEncKeyWithPass = await encryptPayload(newPassDerivedKey, Array.from(new Uint8Array(rawVaultKeyArray)));
@@ -857,7 +862,38 @@
       alert("Master password changed successfully!");
     }
 
-    // --- VAULT PERSISTENCE & RECOVERY ---
+    async function handleChangeMpin(e) {
+      e.preventDefault();
+      const curMpin = document.getElementById('chgCurrentMpin').value;
+      const newMpin = document.getElementById('chgNewMpin').value;
+      const confNewMpin = document.getElementById('chgConfirmNewMpin').value;
+
+      const curMpinHash = await hashString(curMpin);
+      if (curMpinHash !== currentUser.mpinHash) {
+        alert("Current MPIN does not match.");
+        return;
+      }
+
+      if (newMpin !== confNewMpin) {
+        alert("New MPINs do not match.");
+        return;
+      }
+
+      const rawVaultKeyArray = await crypto.subtle.exportKey("raw", masterCryptoKey);
+      const newMpinDerivedKey = await deriveKeyFromSecret(newMpin, currentUser.email);
+      const newEncKeyWithMpin = await encryptPayload(newMpinDerivedKey, Array.from(new Uint8Array(rawVaultKeyArray)));
+
+      currentUser.mpinHash = await hashString(newMpin);
+      currentUser.encKeyWithMpin = newEncKeyWithMpin;
+
+      localStorage.setItem(STORAGE_KEY_AUTH, JSON.stringify(currentUser));
+      closeModal('changeMpinModal');
+      document.getElementById('chgCurrentMpin').value = '';
+      document.getElementById('chgNewMpin').value = '';
+      document.getElementById('chgConfirmNewMpin').value = '';
+      alert("MPIN changed successfully!");
+    }
+
     async function persistVault() {
       if (!masterCryptoKey) return;
       const encryptedData = await encryptPayload(masterCryptoKey, vaultItems);
@@ -931,7 +967,6 @@
       e.target.value = '';
     }
 
-    // --- MAIN WORK: VAULT ITEMS CRUD & FEATURES ---
     function handleAccountTypeChange(value) {
       const customField = document.getElementById('entryCustomAccountType');
       if (value === 'Other') {
@@ -1021,7 +1056,6 @@
       document.getElementById('entryPassword').value = item.password || '';
       evaluatePasswordStrength(item.password, 'entryPassStrengthDisplay');
 
-      // Account type
       if (item.accountType === 'Personal' || item.accountType === 'Work') {
         document.getElementById('entryAccountType').value = item.accountType;
         handleAccountTypeChange(item.accountType);
@@ -1035,7 +1069,6 @@
       document.getElementById('entryRecoveryNumber').value = item.recoveryNumber || '';
       document.getElementById('entryNotes').value = item.notes || '';
 
-      // TFA
       const tfaOn = !!item.tfaRequired;
       document.getElementById('entryTfaToggle').checked = tfaOn;
       toggleTfaFields(tfaOn);
@@ -1144,7 +1177,6 @@
       });
     }
 
-    // --- AUDITOR & RENDERING ---
     function updateVaultAuditor() {
       let weak = 0, med = 0, strong = 0;
       vaultItems.forEach(item => {
@@ -1192,7 +1224,6 @@
         const card = document.createElement('div');
         card.className = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition space-y-3 flex flex-col justify-between";
 
-        // TFA Badges builder
         let tfaBadges = '';
         if (item.tfaRequired && item.tfaDetails) {
           const methods = [];
@@ -1225,7 +1256,6 @@
               ${item.mobile ? `<div><span class="text-slate-400">Mobile:</span> ${escapeHtml(item.mobile)}</div>` : ''}
             </div>
 
-            <!-- Password Row -->
             <div class="bg-slate-50 dark:bg-slate-800/60 p-2.5 rounded-xl flex items-center justify-between border border-slate-200 dark:border-slate-700">
               <span class="font-mono text-xs tracking-wider" id="passView_${item.id}">••••••••••••</span>
               <div class="flex items-center space-x-1.5">
@@ -1258,7 +1288,6 @@
       }
     }
 
-    // Utility sanitizers to prevent XSS
     function escapeHtml(str) {
       if (!str) return '';
       return String(str).replace(/[&<>"']/g, function (m) {
